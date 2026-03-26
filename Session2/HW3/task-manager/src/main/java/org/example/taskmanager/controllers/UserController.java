@@ -1,0 +1,38 @@
+package org.example.taskmanager.controllers;
+
+import org.example.taskmanager.models.User;
+import org.example.taskmanager.services.UserServices;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+public class UserController {
+    @Autowired
+    private UserServices userServices;
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getUsers(@RequestParam(required = false) String search) {
+        if (search == null) {
+            return ResponseEntity.ok(userServices.findAllUsers());
+        }
+        else{
+            List<User> users = userServices.findAllUsers()
+                                            .stream()
+                                            .filter(u -> u.getUsername()
+                                                                       .equalsIgnoreCase(search))
+                                            .toList();
+            return ResponseEntity.ok(users);
+        }
+    }
+
+    @PostMapping("/users")
+    public boolean createUser(@RequestBody User user) {
+        boolean ok = userServices.addUser(user);
+        return ok;
+    }
+}
