@@ -2,6 +2,7 @@ package com.example.course_manager.repositories;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -18,38 +19,37 @@ public class EnrollmentRepository {
         enrollments.add(new Enrollment("3", "Student 3", "3"));
     }
 
-    public List<Enrollment> findAll() {
-        return enrollments;
+    public Optional<List<Enrollment>> findAll() {
+        return Optional.ofNullable(enrollments);
     }
 
-    public Enrollment findById(String id) {
+    public Optional<Enrollment> findById(String id) {
         return enrollments
                 .stream()
-                .filter(e -> e.getId().equals(id)).findFirst()
-                .orElse(null);
+                .filter(e -> e.getId().equals(id)).findFirst();
     }
 
-    public Enrollment create(Enrollment enrollment) {
+    public Optional<Enrollment> create(Enrollment enrollment) {
         enrollments.add(enrollment);
-        return enrollment;
+        return Optional.ofNullable(enrollment);
     }
 
-    public Enrollment update(Enrollment enrollment, String id) {
-        Enrollment oldEnrollment = findById(id);
-        if (oldEnrollment == null) {
-            return null;
+    public Optional<Enrollment> update(Enrollment enrollment, String id) {
+        Optional<Enrollment> oldEnrollment = findById(id);
+        if (oldEnrollment.isEmpty()) {
+            return Optional.empty();
         }
-        enrollments.remove(oldEnrollment);
+        enrollments.remove(oldEnrollment.get());
         enrollments.add(enrollment);
-        return enrollment;
+        return Optional.ofNullable(enrollment);
     }
 
-    public Enrollment delete(String id) {
-        Enrollment oldEnrollment = findById(id);
-        if (oldEnrollment == null) {
-            return null;
+    public Optional<Enrollment> delete(String id) {
+        Optional<Enrollment> oldEnrollment = findById(id);
+        if (oldEnrollment.isEmpty()) {
+            return Optional.empty();
         }
-        enrollments.remove(oldEnrollment);
+        enrollments.remove(oldEnrollment.get());
         return oldEnrollment;
     }
 }

@@ -15,26 +15,22 @@ public class EnrollmentService{
     private EnrollmentRepository enrollmentRepository;
 
     public List<Enrollment> getAllEnrollments(){
-        return enrollmentRepository.findAll();
+        return enrollmentRepository.findAll().orElseThrow(() -> new RuntimeException("Enrollments not found"));
     }
 
     public Enrollment getEnrollmentById(String id){
-        return enrollmentRepository.findById(id);
+        return enrollmentRepository.findById(id).orElseThrow(() -> new RuntimeException("Enrollment not found"));
     }
 
     public Enrollment createEnrollment(Enrollment enrollment){
-        Enrollment enrollmentFound = enrollmentRepository.findById(enrollment.getId());
-        if(enrollmentFound == null){
-            return enrollmentRepository.create(enrollment);
-        }
-        return null;
+        return enrollmentRepository.create(enrollment).orElseThrow(() -> new RuntimeException("Enrollment not created"));
     }
 
     public Enrollment updateEnrollment(Enrollment enrollment, String id){
-        return enrollmentRepository.update(enrollment, id);
+        return enrollmentRepository.update(enrollment, id).orElseThrow(() -> new RuntimeException("Enrollment not found"));
     }
 
     public Enrollment deleteEnrollmentById(String id){
-        return enrollmentRepository.delete(id);
+        return enrollmentRepository.delete(id).orElseThrow(() -> new RuntimeException("Enrollment not found"));
     }
 }

@@ -15,33 +15,22 @@ public class InstructorService {
     private InstructorRepository instructorRepository;
 
     public List<Instructor> findAll(){
-        return instructorRepository.findAll();
+        return instructorRepository.findAll().orElseThrow(() -> new RuntimeException("Instructors not found"));
     }
 
     public Instructor findById(String id){
-        return instructorRepository.findById(id);
+        return instructorRepository.findById(id).orElseThrow(() -> new RuntimeException("Instructor not found"));
     }
 
     public Instructor createInstructor(Instructor instructor){
-        Instructor newInstructor = instructorRepository.findById(instructor.getId());
-        if (newInstructor == null){
-            return instructorRepository.create(instructor);
-        }
-        else {
-            return null;
-        }
+        return instructorRepository.findById(instructor.getId()).orElseThrow(() -> new RuntimeException("Instructor not found"));
     }
 
     public Instructor updateInstructor(Instructor instructor){
-        return instructorRepository.update(instructor);
+        return instructorRepository.update(instructor).orElseThrow(() -> new RuntimeException("Instructor not found"));
     }
 
     public Instructor deleteInstructor(String id){
-        Instructor oldInstructor = findById(id);
-        if (oldInstructor == null){
-            return null;
-        }
-        instructorRepository.delete(id);
-        return oldInstructor;
+        return instructorRepository.delete(id).orElseThrow(() -> new RuntimeException("Instructor not found"));
     }
 }

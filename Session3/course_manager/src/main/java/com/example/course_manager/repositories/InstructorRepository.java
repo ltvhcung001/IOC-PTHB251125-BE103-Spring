@@ -2,6 +2,7 @@ package com.example.course_manager.repositories;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -18,39 +19,38 @@ public class InstructorRepository {
         instructors.add(new Instructor("3", "Instructor 3", "Instructor 3 bio"));
     }
 
-    public List<Instructor> findAll() {
-        return instructors;
+    public Optional<List<Instructor>> findAll() {
+        return Optional.ofNullable(instructors);
     }
 
-    public Instructor findById(String id) {
+    public Optional<Instructor> findById(String id) {
         return instructors
                 .stream()
                 .filter(i -> i.getId().equalsIgnoreCase(id))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
-    public Instructor create(Instructor instructor) {
+    public Optional<Instructor> create(Instructor instructor) {
         instructors.add(instructor);
-        return instructor;
+        return Optional.ofNullable(instructor);
     }
 
-    public Instructor update(Instructor instructor) {
-        Instructor oldInstructor = findById(instructor.getId());
-        if (oldInstructor == null) {
-            return null;
+    public Optional<Instructor> update(Instructor instructor) {
+        Optional<Instructor> oldInstructor = findById(instructor.getId());
+        if (oldInstructor.isEmpty()) {
+            return Optional.empty();
         }
-        instructors.remove(oldInstructor);
+        instructors.remove(oldInstructor.get());
         instructors.add(instructor);
-        return instructor;
+        return Optional.of(instructor);
     }
 
-    public Instructor delete(String id) {
-        Instructor oldInstructor = findById(id);
-        if (oldInstructor == null) {
-            return null;
+    public Optional<Instructor> delete(String id) {
+        Optional<Instructor> oldInstructor = findById(id);
+        if (oldInstructor.isEmpty()) {
+            return Optional.empty();
         }
-        instructors.remove(oldInstructor);
+        instructors.remove(oldInstructor.get());
         return oldInstructor;
     }
 }

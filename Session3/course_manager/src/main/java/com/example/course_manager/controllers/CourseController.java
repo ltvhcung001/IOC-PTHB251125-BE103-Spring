@@ -19,48 +19,62 @@ public class CourseController {
 
     @GetMapping("/courses")
     public ResponseEntity<ApiResponse<List<Course>>> getCourses(){
-        return ResponseEntity.status(HttpStatus.OK)
-                            .body(new ApiResponse<>(true,
-                                    "Courses retrieved successfully",
-                                    courseService.getAll()));
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponse<>(true,
+                        "Courses retrieved successfully",
+                        courseService.getAll()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>(false,
+                        e.getMessage(),
+                        null));
+        }
     }
 
     @PostMapping("/courses")
     public ResponseEntity<ApiResponse<Course>> addCourse(@RequestBody Course course){
-        Course newCourse = courseService.createCourse(course);
-        if (newCourse == null){
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(true,
+                    "Course created successfully",
+                            courseService.createCourse(course)));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                                .body(new ApiResponse<>(false,
-                                                            "Course with the same name already exists",
-                                                                null));
+                .body(new ApiResponse<>(false,
+                    e.getMessage(),
+                        null));
         }
-        return ResponseEntity.status(HttpStatus.CREATED)
-                            .body(new ApiResponse<>(true,
-                                                "Course created successfully",
-                                                    newCourse));
     }
 
     @PutMapping("/courses/{id}")
     public ResponseEntity<ApiResponse<Course>> updateCourse(@RequestBody Course course, @PathVariable String id){
-        Course courseToUpdate = courseService.updateCourse(course);
-        if (courseToUpdate == null){
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponse<>(true,
+                            "Course updated successfully",
+                            courseService.updateCourse(course, id)));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                .body(new ApiResponse<>(false,
-                                                                "Course not found",
-                                                                null));
+                .body(new ApiResponse<>(false,
+                    e.getMessage(),
+                        null));
         }
-        return ResponseEntity.status(HttpStatus.OK)
-                            .body(new ApiResponse<>(true, "Course updated successfully", courseToUpdate));
     }
 
     @DeleteMapping("/courses/{id}")
     public ResponseEntity<ApiResponse<Course>> deleteCourse(@PathVariable String id){
         Course courseToDelete = courseService.deleteCourse(id);
-        if (courseToDelete == null){
+        try {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(new ApiResponse<>(true,
+                            "Course deleted successfully",
+                            courseToDelete));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                .body(new ApiResponse<>(false, "Course not found", null));
+                    .body(new ApiResponse<>(false,
+                            e.getMessage(),
+                            null));
         }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                            .body(new ApiResponse<>(true, "Course deleted successfully", courseToDelete));
     }
 }

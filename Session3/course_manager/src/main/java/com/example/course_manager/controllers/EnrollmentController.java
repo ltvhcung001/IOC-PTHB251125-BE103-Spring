@@ -19,55 +19,62 @@ public class EnrollmentController {
 
     @GetMapping("/enrollments")
     public ResponseEntity<ApiResponse<List<Enrollment>>> getAllEnrollments() {
-        return ResponseEntity.status(HttpStatus.OK)
-                            .body(new ApiResponse<>(true,
-                                                        "Enrollments retrieved successfully",
-                                                            enrollmentService.getAllEnrollments()));
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponse<>(true,
+                            "Enrollments retrieved successfully",
+                            enrollmentService.getAllEnrollments()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>(false,
+                            e.getMessage(),
+                            null));
+        }
     }
 
     @PostMapping("/enrollments")
     public ResponseEntity<ApiResponse<Enrollment>> addEnrollment(@RequestBody Enrollment enrollment) {
-        Enrollment newEnrollment = enrollmentService.createEnrollment(enrollment);
-        if (newEnrollment != null)
+        try {
             return ResponseEntity.status(HttpStatus.CREATED)
-                                .body(new ApiResponse<>(true,
-                                                            "Enrollment created successfully",
-                                                                newEnrollment));
-        else
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                                .body(new ApiResponse<>(false,
-                                                            "Enrollment not found",
-                                                                null));
+                    .body(new ApiResponse<>(true,
+                            "Enrollment created successfully",
+                            enrollmentService.createEnrollment(enrollment)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>(false,
+                            e.getMessage(),
+                            null));
+        }
     }
 
     @PutMapping("/enrollments/{id}")
-    public ResponseEntity<ApiResponse<Enrollment>> updateEnrollment(@PathVariable String id, @RequestBody Enrollment enrollment) {
-        Enrollment updatedEnrollment = enrollmentService.updateEnrollment(enrollment, id);
-        if (updatedEnrollment != null)
+    public ResponseEntity<ApiResponse<Enrollment>> updateEnrollment(@PathVariable String id,
+            @RequestBody Enrollment enrollment) {
+        try {
             return ResponseEntity.status(HttpStatus.OK)
-                                 .body(new ApiResponse<>(true,
-                                                             "Enrollment updated successfully",
-                                                                 updatedEnrollment));
-        else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .body(new ApiResponse<>(false,
-                                                            "Enrollment not found",
-                                                                null));
+                    .body(new ApiResponse<>(true,
+                            "Enrollment updated successfully",
+                            enrollmentService.updateEnrollment(enrollment, id)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>(false,
+                            e.getMessage(),
+                            null));
+        }
     }
 
     @DeleteMapping("enrollments/{id}")
     public ResponseEntity<ApiResponse<Enrollment>> deleteEnrollment(@PathVariable String id) {
-        Enrollment deletedEnrollment = enrollmentService.deleteEnrollmentById(id);
-        if (deletedEnrollment != null){
+        try {
             return ResponseEntity.status(HttpStatus.OK)
-                                 .body(new ApiResponse<>(true,
-                                                            "Enrollment deleted successfully",
-                                                                deletedEnrollment));
+                    .body(new ApiResponse<>(true,
+                            "Enrollment deleted successfully",
+                            enrollmentService.deleteEnrollmentById(id)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>(false,
+                            e.getMessage(),
+                            null));
         }
-        else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .body(new ApiResponse<>(false,
-                                                            "Enrollment not found",
-                                                                null));
     }
 }

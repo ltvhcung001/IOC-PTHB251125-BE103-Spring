@@ -2,6 +2,7 @@ package com.example.course_manager.repositories;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -18,40 +19,41 @@ public class CourseRepository {
         courses.add(new Course("3", "Course 3", "close", "3"));
     }
 
-    public List<Course> findAll() {
-        return courses;
+    public Optional<List<Course>> findAll() {
+        return Optional.ofNullable(courses);
     }
 
-    public Course findById(String id) {
+    public Optional<Course> findById(String id) {
         return courses.stream()
                         .filter(course -> course.getId().equals(id))
-                        .findFirst()
-                        .orElse(null);
+                        .findFirst();
     }
 
-    public Course create(Course course) {
+    public Optional<Course> create(Course course) {
         courses.add(course);
-        return course;
+        return Optional.ofNullable(course);
     }
 
-    public Course update(Course course) {
-        Course existingCourse = findById(course.getId());
-        if (existingCourse == null) {
-            return null;
+    public Optional<Course> update(Course course, String id) {
+        Optional<Course> existingCourse = findById(id);
+        if (existingCourse.isEmpty()) {
+            return Optional.empty();
         }
-        existingCourse.setId(course.getId());
-        existingCourse.setTitle(course.getTitle());
-        existingCourse.setStatus(course.getStatus());
-        existingCourse.setInstructorId(course.getInstructorId());
+        else{
+            existingCourse.get().setId(course.getId());
+            existingCourse.get().setTitle(course.getTitle());
+            existingCourse.get().setStatus(course.getStatus());
+            existingCourse.get().setInstructorId(course.getInstructorId());
+        }
         return existingCourse;
     }
 
-    public Course delete(String id) {
-        Course course = findById(id);
-        if (course == null) {
-            return null;
+    public Optional<Course> delete(String id) {
+        Optional<Course> course = findById(id);
+        if (course.isEmpty()) {
+            return Optional.empty();
         }
-        courses.remove(course);
+        courses.remove(course.get());
         return course;
     }
 }
