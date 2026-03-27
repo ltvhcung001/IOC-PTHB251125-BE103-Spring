@@ -56,4 +56,11 @@ public class CourseRepository {
         courses.remove(course.get());
         return course;
     }
+
+    public Optional<List<Course>> findByInstructorId(String instructorId) {
+        List<Course> instructorCourses = courses.stream()
+                .filter(course -> course.getInstructorId().equals(instructorId))
+                .toList();
+        return instructorCourses.isEmpty() ? Optional.empty() : Optional.of(instructorCourses);
+    }
 }

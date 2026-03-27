@@ -52,4 +52,11 @@ public class EnrollmentRepository {
         enrollments.remove(oldEnrollment.get());
         return oldEnrollment;
     }
+
+    public Optional<List<Enrollment>> findByCourseId(String courseId) {
+        List<Enrollment> courseEnrollments = enrollments.stream()
+                .filter(e -> e.getCourseId().equals(courseId))
+                .toList();
+        return courseEnrollments.isEmpty() ? Optional.empty() : Optional.of(courseEnrollments);
+    }
 }

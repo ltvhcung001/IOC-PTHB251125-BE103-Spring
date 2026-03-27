@@ -1,11 +1,13 @@
 package com.example.course_manager.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.example.course_manager.models.Course;
 import com.example.course_manager.repositories.CourseRepository;
+import com.example.course_manager.repositories.EnrollmentRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -13,6 +15,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CourseService {
     private CourseRepository courseRepository;
+    private EnrollmentRepository enrollmentRepository;
 
     public List<Course> getAll() throws Exception {
         return courseRepository.findAll().orElseThrow(() -> new Exception("Courses not found"));
@@ -32,5 +35,14 @@ public class CourseService {
 
     public Course deleteCourse(String id){
         return courseRepository.delete(id).orElseThrow(() -> new RuntimeException("Course not found"));
+    }
+
+    public List<Course> getActiveCoursesWithEnrollmentsByInstructorId(String instructorId) {
+        return courseRepository.findByInstructorId(instructorId)
+                .orElse(List.of())
+                .stream()
+                .filter(course -> course.getStatus().equalsIgnoreCase("ACTIVE"))
+                .filter(course -> enrollmentRepository.findByCourseId(course.getId()).isPresent())
+                .collect(Collectors.toList());
     }
 }

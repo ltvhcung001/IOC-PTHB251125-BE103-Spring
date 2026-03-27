@@ -1,6 +1,7 @@
 package com.example.course_manager.controllers;
 
 import com.example.course_manager.common.api.ApiResponse;
+import com.example.course_manager.dto.instructor.InstructorDetail;
 import com.example.course_manager.models.Instructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,21 @@ public class InstructorController {
                     .body(new ApiResponse<>(true,
                             "Instructors retrieved successfully",
                             instructorService.findAll()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(false,
+                    e.getMessage(),
+                    null));
+        }
+    }
+
+    @GetMapping("/instructors/with-active-courses")
+    public ResponseEntity<ApiResponse<List<InstructorDetail>>> getInstructorsWithActiveCourses() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponse<>(true,
+                            "Instructors with active courses retrieved successfully",
+                            instructorService.getAllInstructorsWithFilteredCourses()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ApiResponse<>(false,
